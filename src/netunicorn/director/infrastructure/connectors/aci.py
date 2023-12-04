@@ -10,7 +10,7 @@ import os
 
 from azure.identity import ClientSecretCredential
 from azure.mgmt.containerinstance import ContainerInstanceManagementClient
-from azure.mgmt.containerinstance.models import ContainerGroup
+from azure.mgmt.containerinstance.models import ContainerGroup, IpAddress, Port
 from netunicorn.base.architecture import Architecture
 
 from netunicorn.base.deployment import Deployment
@@ -217,15 +217,10 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
             container_groups[deployment.executor_id] = {
                 "location": self.container_location,
                 "restart_policy": "Never",
-                "ip_address": {
-                    "ports": [
-                        {
-                            "protocol": "TCP",
-                            "port": 80  # Replace with your application's port
-                        }
-                    ],
-                    "type": "Public"
-                },
+                "ip_address": IpAddress(
+                    ports=[Port(protocol="TCP", port=80)],  # Adjust as needed
+                    type="Public"
+                ),
                 "os_type": "Linux",
                 "containers": [
                     {

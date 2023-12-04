@@ -217,6 +217,9 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
             container_groups[deployment.executor_id] = {
                 "location": self.container_location,
                 "restart_policy": "Never",
+                "ip_address": {
+                    "type": "Public"
+                },
                 "os_type": "Linux",
                 "containers": [
                     {

@@ -218,6 +218,12 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
                 "location": self.container_location,
                 "restart_policy": "Never",
                 "ip_address": {
+                    "ports": [
+                        {
+                            "protocol": "TCP",
+                            "port": 80  # Replace with your application's port
+                        }
+                    ],
                     "type": "Public"
                 },
                 "os_type": "Linux",

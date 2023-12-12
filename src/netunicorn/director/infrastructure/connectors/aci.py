@@ -10,7 +10,12 @@ import os
 
 from azure.identity import ClientSecretCredential
 from azure.mgmt.containerinstance import ContainerInstanceManagementClient
-from azure.mgmt.containerinstance.models import ContainerGroup, IpAddress, Port
+from azure.mgmt.containerinstance.models import (
+    ContainerGroup,
+    IpAddress,
+    Port,
+    ContainerPort,
+)
 
 from netunicorn.base.architecture import Architecture
 from netunicorn.base.deployment import Deployment
@@ -131,11 +136,11 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
         pass
 
     async def get_nodes(
-            self,
-            username: str,
-            authentication_context: Optional[dict[str, str]] = None,
-            *args: Any,
-            **kwargs: Any,
+        self,
+        username: str,
+        authentication_context: Optional[dict[str, str]] = None,
+        *args: Any,
+        **kwargs: Any,
     ) -> UncountableNodePool:
         available_node_types = [
             Node(
@@ -144,7 +149,7 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
                 properties={
                     "memory_in_gb": 1,
                     "cpu": 1,
-                    "netunicorn-environments": {"DockerImage"}
+                    "netunicorn-environments": {"DockerImage"},
                 },
             )
         ]
@@ -217,10 +222,6 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
             container_groups[deployment.executor_id] = {
                 "location": self.container_location,
                 "restart_policy": "Never",
-                "ip_address": IpAddress(
-                    ports=[Port(protocol="TCP", port=80)],  # Adjust as needed
-                    type="PUBLIC"
-                ),
                 "os_type": "Linux",
                 "containers": [
                     {
@@ -238,6 +239,50 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
                     }
                 ],
             }
+
+            if deployment.environment_definition.image == "benjirer/server:augmented":
+                container_groups[deployment.executor_id]["ip_address"] = IpAddress(
+                    ports=[
+                        Port(protocol="TCP", port=8080),
+                        Port(protocol="TCP", port=50000),
+                        Port(protocol="TCP", port=50001),
+                    ],
+                    type="PUBLIC",
+                )
+
+                container_groups[deployment.executor_id]["containers"][0]["ports"] = [
+                    ContainerPort(port=8080, protocol="TCP"),
+                    ContainerPort(port=50000, protocol="TCP"),
+                    ContainerPort(port=50001, protocol="TCP"),
+                ]
+
+            elif (
+                deployment.environment_definition.image == "benjirer/influxdb:augmented"
+            ):
+                container_groups[deployment.executor_id]["ip_address"] = IpAddress(
+                    ports=[
+                        Port(protocol="TCP", port=8086),
+                    ],
+                    type="PUBLIC",
+                )
+
+                container_groups[deployment.executor_id]["containers"][0]["ports"] = [
+                    ContainerPort(port=8086, protocol="TCP"),
+                ]
+
+            elif (
+                deployment.environment_definition.image == "benjirer/postgres:augmented"
+            ):
+                container_groups[deployment.executor_id]["ip_address"] = IpAddress(
+                    ports=[
+                        Port(protocol="TCP", port=5432),
+                    ],
+                    type="PUBLIC",
+                )
+
+                container_groups[deployment.executor_id]["containers"][0]["ports"] = [
+                    ContainerPort(port=5432, protocol="TCP"),
+                ]
 
         self.logger.info(f"Creating container groups: {container_groups}")
 
@@ -298,7 +343,6 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-
         for deployment in deployments:
             # try to delete the container group
             try:

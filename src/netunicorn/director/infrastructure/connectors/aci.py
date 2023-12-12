@@ -231,9 +231,9 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
                         "resources": {
                             "requests": {
                                 "memory_in_gb": deployment.node.properties.get(
-                                    "memory_in_gb", 1
+                                    "memory_in_gb", 4
                                 ),
-                                "cpu": deployment.node.properties.get("cpu", 1),
+                                "cpu": deployment.node.properties.get("cpu", 2),
                             }
                         },
                     }

@@ -241,6 +241,12 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
             }
 
             if deployment.environment_definition.image == "benjirer/server:augmented":
+                container_groups[deployment.executor_id]["containers"][0]["resources"][
+                    "requests"
+                ]["memory_in_gb"] = 4
+                container_groups[deployment.executor_id]["containers"][0]["resources"][
+                    "requests"
+                ]["cpu"] = 2
                 container_groups[deployment.executor_id]["ip_address"] = IpAddress(
                     ports=[
                         Port(protocol="TCP", port=8080),

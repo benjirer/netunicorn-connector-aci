@@ -248,8 +248,8 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
                         Port(protocol="TCP", port=50001),
                         Port(protocol="TCP", port=50002),
                         Port(protocol="TCP", port=50003),
-                        Port(protocol="TCP", port=50004),
-                        Port(protocol="TCP", port=50005),
+                        # Port(protocol="TCP", port=50004),
+                        # Port(protocol="TCP", port=50005),
                     ],
                     type="PUBLIC",
                 )
@@ -260,8 +260,8 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
                     ContainerPort(port=50001, protocol="TCP"),
                     ContainerPort(port=50002, protocol="TCP"),
                     ContainerPort(port=50003, protocol="TCP"),
-                    ContainerPort(port=50004, protocol="TCP"),
-                    ContainerPort(port=50005, protocol="TCP"),
+                    # ContainerPort(port=50004, protocol="TCP"),
+                    # ContainerPort(port=50005, protocol="TCP"),
                 ]
 
             elif (

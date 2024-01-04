@@ -243,10 +243,10 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
             if deployment.environment_definition.image == "benjirer/server:augmented":
                 container_groups[deployment.executor_id]["containers"][0]["resources"][
                     "requests"
-                ]["memory_in_gb"] = 4
+                ]["memory_in_gb"] = 12
                 container_groups[deployment.executor_id]["containers"][0]["resources"][
                     "requests"
-                ]["cpu"] = 2
+                ]["cpu"] = 4
                 container_groups[deployment.executor_id]["ip_address"] = IpAddress(
                     ports=[
                         Port(protocol="TCP", port=8080),
@@ -273,6 +273,12 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
             elif (
                 deployment.environment_definition.image == "benjirer/influxdb:augmented"
             ):
+                container_groups[deployment.executor_id]["containers"][0]["resources"][
+                    "requests"
+                ]["memory_in_gb"] = 4
+                container_groups[deployment.executor_id]["containers"][0]["resources"][
+                    "requests"
+                ]["cpu"] = 2
                 container_groups[deployment.executor_id]["ip_address"] = IpAddress(
                     ports=[
                         Port(protocol="TCP", port=8086),
@@ -287,6 +293,12 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
             elif (
                 deployment.environment_definition.image == "benjirer/postgres:augmented"
             ):
+                container_groups[deployment.executor_id]["containers"][0]["resources"][
+                    "requests"
+                ]["memory_in_gb"] = 2
+                container_groups[deployment.executor_id]["containers"][0]["resources"][
+                    "requests"
+                ]["cpu"] = 1
                 container_groups[deployment.executor_id]["ip_address"] = IpAddress(
                     ports=[
                         Port(protocol="TCP", port=5432),
@@ -297,6 +309,14 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
                 container_groups[deployment.executor_id]["containers"][0]["ports"] = [
                     ContainerPort(port=5432, protocol="TCP"),
                 ]
+
+            elif deployment.environment_definition.image == "benjirer/client:augmented":
+                container_groups[deployment.executor_id]["containers"][0]["resources"][
+                    "requests"
+                ]["memory_in_gb"] = 2
+                container_groups[deployment.executor_id]["containers"][0]["resources"][
+                    "requests"
+                ]["cpu"] = 1
 
         self.logger.info(f"Creating container groups: {container_groups}")
 

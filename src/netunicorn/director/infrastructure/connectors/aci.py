@@ -95,10 +95,10 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
         self.logger.info("Starting Azure Container Instances cleaner")
         while True:
             try:
-                container_groups: Iterable[
-                    ContainerGroup
-                ] = self.client.container_groups.list_by_resource_group(
-                    self.resource_group_name
+                container_groups: Iterable[ContainerGroup] = (
+                    self.client.container_groups.list_by_resource_group(
+                        self.resource_group_name
+                    )
                 )
 
                 # if all containers in the group are not running, delete the group
@@ -249,14 +249,17 @@ class AzureContainerInstances(NetunicornConnectorProtocol):
                 ]["cpu"] = 4
                 container_groups[deployment.executor_id]["ip_address"] = IpAddress(
                     ports=[
-                        Port(protocol="TCP", port=8080),
-                        # Port(protocol="TCP", port=50000),
-                        Port(protocol="TCP", port=50001),
-                        Port(protocol="TCP", port=50002),
-                        Port(protocol="TCP", port=50003),
-                        Port(protocol="TCP", port=50004),
-                        # Port(protocol="TCP", port=50005),
+                        Port(protocol="TCP", port=selected_port)
+                        for selected_port, key in deployment.environment_definition.ports_mapping.items()
                     ],
+                    # Port(protocol="TCP", port=8080),
+                    # # Port(protocol="TCP", port=50000),
+                    # Port(protocol="TCP", port=50001),
+                    # Port(protocol="TCP", port=50002),
+                    # Port(protocol="TCP", port=50003),
+                    # Port(protocol="TCP", port=50004),
+                    # # Port(protocol="TCP", port=50005),
+                    # ],
                     type="PUBLIC",
                 )
 
